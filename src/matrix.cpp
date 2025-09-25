@@ -1,6 +1,10 @@
 #include "matrix.h" 
 #include <iostream> 
 #include <stdexcept> 
+#include <iomanip>
+#include <string>
+#include <vector>  // для std::vector (если используем вектор для хранения ширины столбцов)
+#include <sstream> // для std::ostringstream
 
 // Создание матрицы заданного размера 
 Matrix create_matrix(int rows, int cols) { 
@@ -30,6 +34,14 @@ void free_matrix(Matrix m) {
 	delete[] m.data; 
 } 
 
+#include <iomanip> // для std::setw, std::fixed, std::setprecision
+#include <vector>  // для std::vector (если используем вектор для хранения ширины столбцов)
+#include <sstream> // для std::ostringstream
+
+#include <iomanip>
+#include <string>
+#include <sstream>
+
 void print_matrix(Matrix m) { 
 	if (m.data == nullptr) { 
 		std::cout << "[Empty matrix]" << std::endl; 
@@ -40,11 +52,10 @@ void print_matrix(Matrix m) {
 		std::cout << "[ "; 
 		for (int j = 0; j < m.cols; j++) { 
 			std::cout << m.data[i][j] << " "; 
-		} 
+		}	 
 		std::cout << "]" << std::endl; 
 	} 
 } 
-
 // Сложение двух матриц 
 Matrix matrix_add(Matrix a, Matrix b) { 
 	// Проверка совпадения размеров 
@@ -95,22 +106,38 @@ Matrix matrix_transpose(Matrix m) {
 // Создание матрицы из одномерного массива 
 Matrix matrix_from_array(double* data, int rows, int cols) { 
 	Matrix result = create_matrix(rows, cols); 
+
 	for (int i = 0; i < rows; i++) { 
 		for (int j = 0; j < cols; j++) { 
 			result.data[i][j] = data[i * cols + j]; 
 		} 
 	} 
+	
 	return result; 
 } 
 
-double matrix_sum(const Matrix& matrix) {
-    double sum = 0.0;
-    // Используем методы rows() и cols() без скобок, если это поля
-    // или с скобками, если это методы
-    for (size_t i = 0; i < matrix.rows; ++i) {  // если rows - поле
-        for (size_t j = 0; j < matrix.cols; ++j) {  // если cols - поле
-            sum += matrix.data[i][j];  // доступ к элементам через data
-        }
-    }
-    return sum;
+// double matrix_sum(const Matrix& matrix) {
+// double sum = 0.0;
+// // Используем методы rows() и cols() без скобок, если это поля
+// // или с скобками, если это методы
+// for (size_t i = 0; i < matrix.rows; ++i) {  // если rows - поле
+// for (size_t j = 0; j < matrix.cols; ++j) {  // если cols - поле
+// sum += matrix.data[i][j];  // доступ к элементам через data
+// }
+// }
+// return sum;
+// }
+double matrix_sum(Matrix m) { 
+	// Проверка на пустую матрицу 
+	if (m.data == nullptr || m.rows <= 0 || m.cols <= 0) { 
+		return 0.0; 
+	} 
+	double sum = 0.0; 
+	// Суммируем все элементы матрицы 
+	for (int i = 0; i < m.rows; i++) { 
+		for (int j = 0; j < m.cols; j++) { 
+			sum += m.data[i][j]; 
+		} 
+	} 
+	return sum; 
 }

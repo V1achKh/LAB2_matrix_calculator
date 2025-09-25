@@ -17,4 +17,7 @@ void print_matrix(Matrix m);
 Matrix matrix_from_array(double* data, int rows, int cols);
 
 // Объявление функции для суммы всех элементов матрицы
-double matrix_sum(const Matrix& matrix);
+//double matrix_sum(const Matrix& matrix);
+
+// ИНДИВИДУАЛЬНОЕ ЗАДАНИЕ: сумма элементов матрицы 
+double matrix_sum(Matrix m);
