@@ -1,38 +1,39 @@
-#include "matrix.h" 
-#include <iostream> 
-#include <stdexcept> 
+#include "matrix.h"
+#include <iostream>
+#include <stdexcept>
 #include <iomanip>
 #include <string>
 #include <vector>  // для std::vector (если используем вектор для хранения ширины столбцов)
 #include <sstream> // для std::ostringstream
+#include <random> // для генерации случайных чисел
 
-// Создание матрицы заданного размера 
-Matrix create_matrix(int rows, int cols) { 
-	if (rows <= 0 || cols <= 0) { 
-		throw std::invalid_argument("Matrix dimensions must be positive"); 
+// Создание матрицы заданного размера
+Matrix create_matrix(int rows, int cols) {
+	if (rows <= 0 || cols <= 0) {
+		throw std::invalid_argument("Matrix dimensions must be positive");
 	}
 
-	Matrix mat; 
-	mat.rows = rows; 
-	mat.cols = cols; 
-	mat.data = new double*[rows]; 
+	Matrix mat;
+	mat.rows = rows;
+	mat.cols = cols;
+	mat.data = new double*[rows];
 
-	for (int i = 0; i < rows; i++) { 
-		mat.data[i] = new double[cols]();  // () инициализирует нулями 
-	} 
-	return mat; 
-} 
+	for (int i = 0; i < rows; i++) {
+		mat.data[i] = new double[cols]();  // () инициализирует нулями
+	}
+	return mat;
+}
 
-// Освобождение памяти матрицы 
-void free_matrix(Matrix m) { 
+// Освобождение памяти матрицы
+void free_matrix(Matrix m) {
 	if (m.data == nullptr){
-		 return; 
+		 return;
 	}
-	for (int i = 0; i < m.rows; i++) { 
-		delete[] m.data[i]; 
-	} 
-	delete[] m.data; 
-} 
+	for (int i = 0; i < m.rows; i++) {
+		delete[] m.data[i];
+	}
+	delete[] m.data;
+}
 
 #include <iomanip> // для std::setw, std::fixed, std::setprecision
 #include <vector>  // для std::vector (если используем вектор для хранения ширины столбцов)
@@ -42,79 +43,79 @@ void free_matrix(Matrix m) {
 #include <string>
 #include <sstream>
 
-void print_matrix(Matrix m) { 
-	if (m.data == nullptr) { 
-		std::cout << "[Empty matrix]" << std::endl; 
-		return; 
-	} 
-	std::cout << "Matrix " << m.rows << "x" << m.cols << ":" << std::endl; 
-	for (int i = 0; i < m.rows; i++) { 
-		std::cout << "[ "; 
-		for (int j = 0; j < m.cols; j++) { 
-			std::cout << m.data[i][j] << " "; 
-		}	 
-		std::cout << "]" << std::endl; 
-	} 
-} 
-// Сложение двух матриц 
-Matrix matrix_add(Matrix a, Matrix b) { 
-	// Проверка совпадения размеров 
-	if (a.rows != b.rows || a.cols != b.cols) { 
-		throw std::invalid_argument("Matrix dimensions must match for addition"); 
-	} 
-	Matrix result = create_matrix(a.rows, a.cols); 
+void print_matrix(Matrix m) {
+	if (m.data == nullptr) {
+		std::cout << "[Empty matrix]" << std::endl;
+		return;
+	}
+	std::cout << "Matrix " << m.rows << "x" << m.cols << ":" << std::endl;
+	for (int i = 0; i < m.rows; i++) {
+		std::cout << "[ ";
+		for (int j = 0; j < m.cols; j++) {
+			std::cout << m.data[i][j] << " ";
+		}
+		std::cout << "]" << std::endl;
+	}
+}
+// Сложение двух матриц
+Matrix matrix_add(Matrix a, Matrix b) {
+	// Проверка совпадения размеров
+	if (a.rows != b.rows || a.cols != b.cols) {
+		throw std::invalid_argument("Matrix dimensions must match for addition");
+	}
+	Matrix result = create_matrix(a.rows, a.cols);
 
-	for (int i = 0; i < a.rows; i++) { 
-		for (int j = 0; j < a.cols; j++) { 
-			result.data[i][j] = a.data[i][j] + b.data[i][j]; 
-		} 
-	} 
-	return result; 
-} 
+	for (int i = 0; i < a.rows; i++) {
+		for (int j = 0; j < a.cols; j++) {
+			result.data[i][j] = a.data[i][j] + b.data[i][j];
+		}
+	}
+	return result;
+}
 
-// Умножение матриц 
-Matrix matrix_multiply(Matrix a, Matrix b) { 
-	// Проверка совместимости размеров 
-	if (a.cols != b.rows) { 
-		throw std::invalid_argument("Number of columns in A must equal number of rows in B"); 
-	} 
-	Matrix result = create_matrix(a.rows, b.cols); 
+// Умножение матриц
+Matrix matrix_multiply(Matrix a, Matrix b) {
+	// Проверка совместимости размеров
+	if (a.cols != b.rows) {
+		throw std::invalid_argument("Number of columns in A must equal number of rows in B");
+	}
+	Matrix result = create_matrix(a.rows, b.cols);
 
-	for (int i = 0; i < a.rows; i++) { 
-		for (int j = 0; j < b.cols; j++) { 
-			result.data[i][j] = 0; 
-			for (int k = 0; k < a.cols; k++) { 
-				result.data[i][j] += a.data[i][k] * b.data[k][j]; 
-			} 
-		} 
-	} 
-	return result; 
-} 	
+	for (int i = 0; i < a.rows; i++) {
+		for (int j = 0; j < b.cols; j++) {
+			result.data[i][j] = 0;
+			for (int k = 0; k < a.cols; k++) {
+				result.data[i][j] += a.data[i][k] * b.data[k][j];
+			}
+		}
+	}
+	return result;
+}
 
-// Транспонирование матрицы 
-Matrix matrix_transpose(Matrix m) { 
-	Matrix result = create_matrix(m.cols, m.rows); 
-	for (int i = 0; i < m.rows; i++) { 
-		for (int j = 0; j < m.cols; j++) { 
-			result.data[j][i] = m.data[i][j]; 
-		} 
-	} 
+// Транспонирование матрицы
+Matrix matrix_transpose(Matrix m) {
+	Matrix result = create_matrix(m.cols, m.rows);
+	for (int i = 0; i < m.rows; i++) {
+		for (int j = 0; j < m.cols; j++) {
+			result.data[j][i] = m.data[i][j];
+		}
+	}
 
-	return result; 
-} 
+	return result;
+}
 
-// Создание матрицы из одномерного массива 
-Matrix matrix_from_array(double* data, int rows, int cols) { 
-	Matrix result = create_matrix(rows, cols); 
+// Создание матрицы из одномерного массива
+Matrix matrix_from_array(double* data, int rows, int cols) {
+	Matrix result = create_matrix(rows, cols);
 
-	for (int i = 0; i < rows; i++) { 
-		for (int j = 0; j < cols; j++) { 
-			result.data[i][j] = data[i * cols + j]; 
-		} 
-	} 
-	
-	return result; 
-} 
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			result.data[i][j] = data[i * cols + j];
+		}
+	}
+
+	return result;
+}
 
 // double matrix_sum(const Matrix& matrix) {
 // double sum = 0.0;
@@ -127,17 +128,41 @@ Matrix matrix_from_array(double* data, int rows, int cols) {
 // }
 // return sum;
 // }
-double matrix_sum(Matrix m) { 
-	// Проверка на пустую матрицу 
-	if (m.data == nullptr || m.rows <= 0 || m.cols <= 0) { 
-		return 0.0; 
-	} 
-	double sum = 0.0; 
-	// Суммируем все элементы матрицы 
-	for (int i = 0; i < m.rows; i++) { 
-		for (int j = 0; j < m.cols; j++) { 
-			sum += m.data[i][j]; 
-		} 
-	} 
-	return sum; 
+double matrix_sum(Matrix m) {
+	// Проверка на пустую матрицу
+	if (m.data == nullptr || m.rows <= 0 || m.cols <= 0) {
+		return 0.0;
+	}
+	double sum = 0.0;
+	// Суммируем все элементы матрицы
+	for (int i = 0; i < m.rows; i++) {
+		for (int j = 0; j < m.cols; j++) {
+			sum += m.data[i][j];
+		}
+	}
+	return sum;
+}
+// Создание случайной матрицы
+Matrix matrix_random(int rows, int cols, double min, double max) {
+    if (rows <= 0 || cols <= 0) {
+        throw std::invalid_argument("Matrix dimensions must be positive");
+    }
+    if (min > max) {
+        throw std::invalid_argument("Min value cannot be greater than max value");
+    }
+
+    // Инициализация генератора случайных чисел
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dist(min, max);
+
+    Matrix result = create_matrix(rows, cols);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            result.data[i][j] = dist(gen);
+        }
+    }
+
+    return result;
 }
